@@ -111,18 +111,22 @@
       return false;
     } 
     else if (nomeVar.length <= 1) {
+        cardErro.style.display = "block";
         mensagem_erro.innerHTML = "O nome deve ter mais de um caractere.";
         return false;
     } 
     else if (emailVar.indexOf('@') == -1 || emailVar.indexOf('.') == -1) {
+        cardErro.style.display = "block";
         mensagem_erro.innerHTML = "O e-mail deve ser válido (obrigatoriamente conter '@' e '.')";
         return false;
     } 
     else if (senhaVar.length < 6) {
+        cardErro.style.display = "block";
         mensagem_erro.innerHTML = "A senha deve ter pelo menos 6 caracteres.";
         return false;
     } 
     else if (confirmacaoSenhaVar != senhaVar) {
+        cardErro.style.display = "block";
         mensagem_erro.innerHTML ="As senhas informadas não coincidem.";
         return false; 
     } 

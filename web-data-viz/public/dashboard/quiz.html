@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossiê Simon | Quiz</title>
+    
+     <link rel="icon" href="../assets/icon/Dossie Simon icon.png">
+    <link rel="stylesheet" href="./../css/dashboards.css">
+    <link rel="stylesheet" href="./../css/estilo.css" />
+    <script src="../js/sessao.js"></script>
+    <script src="./../js/alerta.js"></script>
+</head>
+
+<body onload="onloadEsconder()">
+    
+   <div class="janela">
+        <div class="header-left">
+            <div class="logo">
+            <img src="../assets/icon/dossie-simon.png">
+            </div>
+
+            <div class="hello">
+                <h3>Olá, <span id="b_usuario">usuário</span>!</h3>
+            </div>
+
+            <div class="btn-nav-white">
+                <a href="./pistas.html">
+                    <h3>Pistas</h3>
+                </a>
+            </div>
+
+             <div class="btn-nav">
+                <a href="./quiz.html">
+                    <h3>Quiz</h3>
+                </a>
+            </div>
+
+            <div class="btn-nav-white">
+            <a href="./dashboard.html">
+                <h3>Dashboard</h3>
+                </a>
+            </div>
+
+            <div class="btn-nav-white">
+                <a href="./mural.html">
+                    <h3>Feed</h3>
+                </a>
+            </div>
+
+            <div class="btn-logout" onclick="limparSessao()">
+                <h3>Sair</h3>
+            </div>
+
+        </div>
+
+    <div id="pontuacaoEJogo">
+        
+        <button id="btnIniciarQuiz" onclick="iniciarQuiz()" class="btn-iniciar">INICIAR QUIZ</button>
+         
+        <div id="secao_voto" class="voto" style="display: none;">
+            <div class="padding-8">
+                <p>Selecione quem você acredita ser o responsável pelo crime:</p>
+            </div>
+
+            <div id="opcoes_voto" class="opcoes-voto">
+                
+                <div class="item-suspeito">
+                    <input type="radio" id="suspeito1" name="suspeito" value="Bronwyn">
+                    <img src="../assets/imgs/bronwyn.jpg" alt="Bronwyn" class="img">
+                    <label for="suspeito1" class="option">Bronwyn (A Inteligente)</label> 
+                </div>
+
+                <div class="item-suspeito">
+                    <input type="radio" id="suspeito2" name="suspeito" value="Nate">
+                    <img src="../assets/imgs/nate.jpg" alt="Nate" class="img">
+                    <label for="suspeito2" class="option">Nate (O Criminoso)</label>
+                </div>
+
+                <div class="item-suspeito">
+                    <input type="radio" id="suspeito3" name="suspeito" value="Cooper">
+                    <img src="../assets/imgs/cooper.jpg" alt="Cooper" class="img">
+                    <label for="suspeito3" class="option">Cooper (O Atleta)</label>
+                </div>
+
+                <div class="item-suspeito">
+                    <input type="radio" id="suspeito4" name="suspeito" value="Addy">
+                    <img src="../assets/imgs/addy.jpg" alt="Addy" class="img">
+                    <label for="suspeito4" class="option">Addy (A Princesa)</label>
+                </div>
+
+                <div class="item-suspeito">
+                    <input type="radio" id="suspeito5" name="suspeito" value="Simon">
+                    <img src="../assets/imgs/simon.jpg" alt="Simon" class="img">
+                    <label for="suspeito5" class="option">Simon (O criador)</label>
+                </div>
+                
+            </div>
+
+            <div class="padding-8">
+                <button onclick="confirmarSuspeito()" id="btnVotar">Registrar Suspeito</button>
+            </div>
+        <div id="verdade" class="vdd" style="display: none;">
+            <h3>Verdade Revelada!</h3>
+                    <!-- <img class="img-suspeito" src="../assets/imgs/suspeito.jpg" alt="Suspeito revelado"> -->
+                <p>Depois de semanas de falsas pistas, acusações mútuas entre o quarteto de Bayview 
+                    (Nate, Bronwyn, Addy e Cooper) e teorias criadas pela comunidade de investigadores, 
+                    a peça final do quebra-cabeça foi encontrada.</p>
+                    <span class="frase-destaque">O culpado não estava entre os quatro suspeitos principais.</span>
+                    <p>
+                    O plano foi arquitetado pelo próprio <span class="frase-destaque">Simon Kelleher</span>. Amargurado pelo 
+                    isolamento social e em busca de uma vingança definitiva contra os colegas que o 
+                    rejeitaram, Simon planejou a própria morte na sala de detenção para incriminar os 
+                    quatro estudantes mais populares da escola, garantindo que suas reputações fossem 
+                    destruídas para sempre.
+                </p>
+                <p>
+                    Para garantir que o plano funcionasse do lado de fora, ele contou com a ajuda oculta 
+                    de <span class="frase-destaque">Jake</span> (ex-namorado de Addy), que ficou responsável por continuar as 
+                    postagens no aplicativo About That e direcionar a investigação da polícia contra o grupo.
+                </p>
+                <p class="fechado">CASO RESOLVIDO</p>
+                
+              <button class="fechar-vdd" onclick="fechar()">Fechar página</button> 
+            
+            <div id="msg_voto" class="padding-8"></div>
+        </div>
+        </div>
+
+        <div id="pontuacao" class="container-pontuacao">
+            <div id="pontuacaoDuranteJogo" class="duranteJogo">
+                <span class="valor acerto">Acertos: <span id="spanCertas"></span></span>
+                <span class="valor erro">Erros: <span id="spanErradas"></span></span>
+            </div>
+            <div id="pontuacaoFinalJogo" class="pontFinal">
+                <span id="pontuacaoFinal">Pontuação Final:
+                    <span id="spanPontuacaoFinal">***</span>
+                </span>
+                <span id="msgFinal">***</span>
+            </div>
+        </div>
+
+        <div id="jogo" class="container-quiz">
+
+            <div id="infoQuestao" class="infosQ">
+                <span>Questão atual: <span id="spanNumeroDaQuestaoAtual"></span> de <span id="qtdQuestoes"></span> questões.</span>
+            </div>
+
+            <div id="perguntaDaQuestaoAtual" class="pergQA">
+                <span id="spanQuestaoExibida" class="text-bold"></span>
+            </div>
+
+            <div id="infoAlternativas" class="padding-8">
+                <span><em>Escolha uma opção dentre as abaixo:</em></span>
+            </div>
+
+            <div id="opcoes" class="flex-colunar padding-8">
+                <span>
+                    <input type="radio" id="primeiraOpcao" name="option" class="radio" value="alternativaA" />
+                    <label for="primeiraOpcao" class="option" id="labelOpcaoUm"></label>
+                </span>
+                <span>
+                    <input type="radio" id="segundaOpcao" name="option" class="radio" value="alternativaB" />
+                    <label for="segundaOpcao" class="option" id="labelOpcaoDois"></label>
+                </span>
+                <span>
+                    <input type="radio" id="terceiraOpcao" name="option" class="radio" value="alternativaC" />
+                    <label for="terceiraOpcao" class="option" id="labelOpcaoTres"></label>
+                </span>
+                <span>
+                    <input type="radio" id="quartaOpcao" name="option" class="radio" value="alternativaD" />
+                    <label for="quartaOpcao" class="option" id="labelOpcaoQuatro"></label>
+                </span>
+            </div>
+
+            <div id="botoes" class="flex-colunar padding-8">
+                <button onclick="submeter()" id="btnSubmeter">Submeter resposta</button>
+                <button onclick="avancar()" id="btnProx" disabled>Avançar para próxima questão</button>
+                <button onclick="tentarNovamente()" id="btnTentarNovamente" disabled>Tentar novamente</button>
+                <button onclick="exibirTelaVoto()" id="confirmarSuspeito">Diga o seu suspeito</button>
+            </div>
+
+        </div>
+    </div>
+   
+</body>
+</html>
+<script>
+        b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
+
+   const listaDeQuestoes = [
+    {
+        pergunta: "Muitos acreditam que os quatro de Bayview agiram sozinhos, mas a investigação revela que Jake Riordan, o namorado de Addy, teve um papel sombrio por trás das câmeras. Qual era o principal motivo para Jake odiar Simon e querer vê-lo morto?",
+        alternativaA: "Simon descobriu que Jake estava traindo Addy com outra garota",
+        alternativaB: "Jake queria assumir o controle do site de fofocas 'About That'",
+        alternativaC: "Simon sabia que Jake ajudou na fraude das notas de beisebol",
+        alternativaD: "Eles eram amigos de infância e Simon o chantageava constantemente",
+        alternativaCorreta: "alternativaA"
+    },
+    {
+        pergunta: "TJ Forrester é um personagem secundário que se vê no meio do furacão quando o segredo de Addy é revelado para toda a escola. O que exatamente aconteceu entre TJ e a 'princesa' de Bayview que Simon usou para destruir o relacionamento dela?",
+        alternativaA: "Eles foram vistos roubando as respostas da prova final",
+        alternativaB: "TJ e Addy tiveram um envolvimento romântico enquanto ela namorava Jake",
+        alternativaC: "TJ era quem escrevia os posts de fofoca para o Simon",
+        alternativaD: "Eles planejaram juntos a festa onde Simon passou mal",
+        alternativaCorreta: "alternativaB"
+    },
+    {
+        pergunta: "A mãe de Nate Macauley é um ponto chave para o desenvolvimento do personagem. Após anos desaparecida e sendo dada como morta por Nate, ela reaparece na cidade. Qual era o verdadeiro problema que a afastou da família por tanto tempo?",
+        alternativaA: "Ela estava fugindo da polícia por crimes financeiros",
+        alternativaB: "Ela lutava contra o vício em drogas e problemas de saúde mental",
+        alternativaC: "Ela iniciou uma nova família rica em outra cidade",
+        alternativaD: "Ela foi sequestrada por inimigos do pai de Nate",
+        alternativaCorreta: "alternativaB"
+    },
+    {
+        pergunta: "Vanessa Clark é a típica 'garota popular' que parece odiar todos os envolvidos na detenção. No entanto, ela tem uma conexão direta com uma das vítimas de Simon. Quem era a melhor amiga de Vanessa que também teve a vida exposta pelo site?",
+        alternativaA: "A irmã mais nova de Bronwyn, Maeve",
+        alternativaB: "Addy Prentiss, antes de serem rivais",
+        alternativaC: "Keely, a ex-namorada de Cooper Clay",
+        alternativaD: "Leah, uma garota que Simon humilhou publicamente",
+        alternativaCorreta: "alternativaC"
+    },
+    {
+        pergunta: "Maeve, a irmã de Bronwyn, prova ser uma das mentes mais brilhantes da história ao hackear o servidor do Simon. Qual detalhe importante sobre o passado de Maeve faz com que a família seja tão protetora com ela?",
+        alternativaA: "Ela já foi expulsa de três escolas por comportamento rebelde",
+        alternativaB: "Ela sobreviveu a uma leucemia quando era mais nova",
+        alternativaC: "Ela era a verdadeira dona do fórum secreto da escola",
+        alternativaD: "Ela estava presente no dia em que Simon criou o 'About That'",
+        alternativaCorreta: "alternativaB"
+    },
+    {
+        pergunta: "O professor Avery é quem coloca os cinco alunos na detenção por causa dos celulares plantados. Mais tarde, descobre-se que ele tinha uma regra muito rígida sobre tecnologia. Por que ele era o alvo perfeito para o plano de Simon?",
+        alternativaA: "Ele nunca deixava os alunos saírem da sala por motivo nenhum",
+        alternativaB: "Ele detestava fofocas e queria fechar o site de Simon",
+        alternativaC: "Ele tinha um histórico de agressividade com Nate e Bronwyn",
+        alternativaD: "Ele era conhecido por sua intolerância absoluta a celulares em sala",
+        alternativaCorreta: "alternativaD"
+    }
+];
+// variáveis globais    
+    let numeroDaQuestaoAtual = 0
+    let pontuacaoFinal = 0
+    let tentativaIncorreta = 0
+    let certas = 0
+    let erradas = 0
+    let quantidadeDeQuestoes = listaDeQuestoes.length
+    // let isUltima = numeroDaQuestaoAtual == quantidadeDeQuestoes-1 ? true : false
+
+    function onloadEsconder() {
+        document.getElementById('pontuacao').style.display = "none"
+        document.getElementById('jogo').style.display = "none"
+    }
+
+    function iniciarQuiz() {
+        document.getElementById('pontuacao').style.display = "flex"
+        document.getElementById('jogo').style.display = "flex"
+        document.getElementById('btnIniciarQuiz').style.display = "none"
+
+        document.getElementById('qtdQuestoes').innerHTML = quantidadeDeQuestoes
+
+        preencherHTMLcomQuestaoAtual(0)
+
+        btnSubmeter.disabled = false
+        btnProx.disabled = true
+        // btnConcluir.disabled = true
+        btnTentarNovamente.disabled = true
+    }
+
+    function preencherHTMLcomQuestaoAtual(index) {
+        habilitarAlternativas(true)
+        const questaoAtual = listaDeQuestoes[index]
+        numeroDaQuestaoAtual = index
+        console.log("questaoAtual")
+        console.log(questaoAtual)
+        document.getElementById("spanNumeroDaQuestaoAtual").innerHTML = Number(index) + 1 // ajustando porque o index começa em 0
+        document.getElementById("spanQuestaoExibida").innerHTML = questaoAtual.pergunta;
+        document.getElementById("labelOpcaoUm").innerHTML = questaoAtual.alternativaA;
+        document.getElementById("labelOpcaoDois").innerHTML = questaoAtual.alternativaB;
+        document.getElementById("labelOpcaoTres").innerHTML = questaoAtual.alternativaC;
+        document.getElementById("labelOpcaoQuatro").innerHTML = questaoAtual.alternativaD;
+    }
+
+    function submeter() {
+        const options = document.getElementsByName("option"); // recupera alternativas no html
+
+        let hasChecked = false
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].checked) {
+                hasChecked = true
+                break
+            }
+        }
+
+        if (!hasChecked) {
+            alert("Não há alternativas escolhidas. Escolha uma opção.")
+        } else {
+            btnSubmeter.disabled = true
+            btnProx.disabled = false
+
+            habilitarAlternativas(false)
+
+            checarResposta()
+        }
+    }
+
+    function habilitarAlternativas(trueOrFalse) {
+        let opcaoEscolhida = trueOrFalse ? false : true
+
+        primeiraOpcao.disabled = opcaoEscolhida
+        segundaOpcao.disabled = opcaoEscolhida
+        terceiraOpcao.disabled = opcaoEscolhida
+        quartaOpcao.disabled = opcaoEscolhida
+
+    }
+
+    function avancar() {
+        btnProx.disabled = true
+        btnSubmeter.disabled = false
+
+        desmarcarRadioButtons()
+
+        if (numeroDaQuestaoAtual < quantidadeDeQuestoes - 1) {
+            preencherHTMLcomQuestaoAtual(numeroDaQuestaoAtual)
+        } else if (numeroDaQuestaoAtual == quantidadeDeQuestoes - 1) {
+            alert("Atenção... a próxima é a ultima questão!")
+            preencherHTMLcomQuestaoAtual(numeroDaQuestaoAtual)
+        } else {
+            finalizarJogo()
+        }
+        limparCoresBackgroundOpcoes()
+    }
+
+    function tentarNovamente() {
+        // atualiza a página
+        window.location.reload()
+    }
+
+    function checarResposta() {
+        const questaoAtual = listaDeQuestoes[numeroDaQuestaoAtual] // questão atual 
+        const respostaQuestaoAtual = questaoAtual.alternativaCorreta // qual é a resposta correta da questão atual
+
+        const options = document.getElementsByName("option"); // recupera alternativas no html
+
+        let alternativaCorreta = null // variável para armazenar a alternativa correta
+
+        options.forEach((option) => {
+            if (option.value === respostaQuestaoAtual) {
+                console.log("alternativaCorreta está no componente: " + alternativaCorreta)
+                alternativaCorreta = option.labels[0].id
+            }
+        })
+
+        // verifica se resposta assinalada é correta
+        options.forEach((option) => {
+            if (option.checked === true && option.value === respostaQuestaoAtual) {
+                document.getElementById(alternativaCorreta).classList.add("text-success-with-bg")
+                pontuacaoFinal++
+                certas++
+                document.getElementById("spanCertas").innerHTML = certas
+                numeroDaQuestaoAtual++
+            } else if (option.checked && option.value !== respostaQuestaoAtual) {
+                const wrongLabelId = option.labels[0].id
+
+                document.getElementById(wrongLabelId).classList.add("text-danger-with-bg")
+                document.getElementById(alternativaCorreta).classList.add("text-success-with-bg")
+                tentativaIncorreta++
+                erradas++
+                document.getElementById("spanErradas").innerHTML = erradas
+                numeroDaQuestaoAtual++
+            }
+        })
+    }
+
+    function limparCoresBackgroundOpcoes() {
+        const options = document.getElementsByName("option");
+        options.forEach((option) => {
+            document.getElementById(option.labels[0].id).classList.remove("text-danger-with-bg")
+            document.getElementById(option.labels[0].id).classList.remove("text-success-with-bg")
+        })
+    }
+
+    function desmarcarRadioButtons() {
+        const options = document.getElementsByName("option");
+        for (let i = 0; i < options.length; i++) {
+            options[i].checked = false;
+        }
+    }
+
+    function finalizarJogo() {
+        document.getElementById('pontuacaoDuranteJogo').style.display = "none"
+        document.getElementById('pontuacaoFinalJogo').style.display = "flex"
+        let textoParaMensagemFinal = null
+        let classComCoresParaMensagemFinal = null
+        const porcentagemFinalDeAcertos = pontuacaoFinal / quantidadeDeQuestoes
+
+        if (porcentagemFinalDeAcertos <= 0.3) {
+            textoParaMensagemFinal = "Parece que você não estudou..."
+            classComCoresParaMensagemFinal = "text-danger-with-bg"
+        }
+        else if (porcentagemFinalDeAcertos > 0.3 && porcentagemFinalDeAcertos < 0.9) {
+            textoParaMensagemFinal = "Pode melhorar na próxima, hein!"
+            classComCoresParaMensagemFinal = "text-warning-with-bg"
+        }
+        else if (porcentagemFinalDeAcertos >= 0.9) {
+            textoParaMensagemFinal = "Uau, parabéns!"
+            classComCoresParaMensagemFinal = "text-success-with-bg"
+        }
+
+        textoParaMensagemFinal += "<br> Você acertou " + Math.round((porcentagemFinalDeAcertos)*100) + "% das questões."
+
+
+        document.getElementById('msgFinal').innerHTML = textoParaMensagemFinal
+        document.getElementById('msgFinal').classList.add(classComCoresParaMensagemFinal) 
+        document.getElementById('spanPontuacaoFinal').innerHTML = pontuacaoFinal
+
+        document.getElementById('jogo').classList.add("text-new-gray") 
+
+        btnProx.disabled = true
+        btnSubmeter.disabled = true
+        // btnConcluir.disabled = true
+        btnTentarNovamente.disabled = false
+    };
+function confirmarSuspeito() {
+    var idUsuario = sessionStorage.ID_USUARIO || sessionStorage.idUsuario; 
+
+    var inputSelecionado = document.querySelector('input[name="suspeito"]:checked');
+
+    if (!inputSelecionado) {
+        alert("Por favor, selecione um suspeito antes de registrar!");
+        return;
+    }
+    if (!idUsuario) {
+        alert("Erro: Usuário não identificado. Faça login novamente.");
+        return;
+    }
+
+    var suspeitoEscolhido = inputSelecionado.value;
+
+    console.log("Enviando dados:", { suspeitoEscolhido, idUsuario });
+
+
+    fetch("/votos/votar", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            votoServer: suspeitoEscolhido,      
+            idUsuarioServer: idUsuario          
+        })
+    }).then(function (resposta) {
+        if (resposta.ok) {
+            alert("Voto registrado no histórico com sucesso!");
+        // document.getElementById('verdade').style.display = "flex";
+        } else {
+            resposta.text().then(texto => {
+                console.error("Erro do servidor:", texto);
+                alert("Erro ao registrar o voto.");
+            });
+        }
+    }).catch(function (erro) {
+        console.error("Erro na requisição:", erro);
+    });
+}
+function exibirTelaVoto() {
+    document.getElementById('jogo').style.display = "none";
+    document.getElementById('pontuacao').style.display = "none";
+    document.getElementById('btnIniciarQuiz').style.display = "none";
+    document.getElementById('secao_voto').style.display = "flex";
+}
+
+</script>

@@ -126,6 +126,19 @@ body {
   align-items: center;
 }
 
+.btn-info {
+  cursor: pointer;
+  font-family: "Montserrat", sans-serif;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 12px;
+  color: #fff;
+  background-color: #7e0a0d;
+  width: 180px;
+  height: 30px;
+  align-self: center;
+}
+
 /* FOOTER */
 
 .footer {
@@ -248,12 +261,12 @@ body {
 
 .card_erro {
   display: none;
-  background-color: #fff;
+  background-color: whitesmoke;
   color: black;
   width: 230px;
   position: fixed;
   border-radius: 4px;
-  border: #ED145B 3px solid;
+  border: #200102 3px solid;
   padding: 10px;
   margin-right: 10%;
 }
