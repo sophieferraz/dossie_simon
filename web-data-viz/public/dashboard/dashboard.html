@@ -25,7 +25,7 @@
 
 <!-- <body onload=" atualizarFeed()"> -->
 
-<body>
+<body onload="obterDadosGrafico()">
 
     <div class="janela">
         <div class="header-left">
@@ -67,21 +67,28 @@
 
         </div>
 
-        <div class="dash">
-            <div id="alerta">
-            </div>
-
-            <div class="btns-dash" id="btnAquario">
-                <!-- O gráfico é chamado de acordo com o id (fk_aquario) do banco  -->
-            </div>
-            <div id="graficos">
-            </div>
-        </div>
+           <div class="container-grafico">            
+        <h2>Estatísticas do Dossiê: Quem é o assassino?</h2>
+        <div class="secao-kpis">
+    <div class="card-kpi">
+        <h3>Total de Votos</h3>
+        <p id="kpi_total">0</p>
+        <span>votos computados</span>
     </div>
 
+    <div class="card-kpi destaque">
+        <h3>Principal Suspeito</h3>
+        <p id="kpi_suspeito">Nenhum</p>
+        <span id="kpi_votos_suspeito">0 votos</span>
+    </div>
+</div>
+        <div class="caixa-grafico">
+            <p>Suspeitos acumulados em tempo real pelos investigadores de Bayview High</p>
 
+                <canvas class="grafico" id="meuGraficoCanvas"></canvas>
+            </div>
+            </div>
 </body>
-
 </html>
 
 <script>
@@ -101,20 +108,19 @@
 
     //     Se quiser alterar a busca, ajuste as regras de negócio em src/controllers
     //     Para ajustar o "select", ajuste o comando sql em src/models
-    function obterDadosGrafico(idAquario) {
-
+    function obterDadosGrafico() {
 
         if (proximaAtualizacao != undefined) {
             clearTimeout(proximaAtualizacao);
         }
 
-        fetch(`/medidas/ultimas/${idAquario}`, { cache: 'no-store' }).then(function (response) {
+        fetch(`/votos/ultimos`, { cache: 'no-store' }).then(function (response) {
             if (response.ok) {
                 response.json().then(function (resposta) {
                     console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
                     resposta.reverse();
 
-                    plotarGrafico(resposta, idAquario);
+                    plotarGrafico(resposta);
 
                 });
             } else {
@@ -129,58 +135,100 @@
     // Esta função *plotarGrafico* usa os dados capturados na função anterior para criar o gráfico
     // Configura o gráfico (cores, tipo, etc), materializa-o na página e, 
     // A função *plotarGrafico* também invoca a função *atualizarGrafico*
-    function plotarGrafico(resposta, idAquario) {
+    function plotarGrafico(resposta) {
 
         console.log('iniciando plotagem do gráfico...');
 
         // Criando estrutura para plotar gráfico - labels
         let labels = [];
+        let dadosVotos = [];
+        let coresDosSuspeitos = []; 
+        let totalVotosGeral = 0;
+        let maiorQuantidadeVotos = 0;
+        let suspeitoMaisVotado = "";
+        let houveEmpate = false;
 
-        // Criando estrutura para plotar gráfico - dados
-        let dados = {
-            labels: labels,
-            datasets: [
-            {
-                label: 'Temperatura',
-                data: [],
-                fill: false,
-                borderColor: 'rgb(199, 52, 52)',
-                tension: 0.1
-            }]
-        };
+        // passa por todos os registros pra descobrir o total acumulado
+        for (let i = 0; i < resposta.length; i++) {
+        totalVotosGeral += resposta[i].votos;
+    }
+
+    // montar os dados aplicando regra de três e as cores
+    for (let i = 0; i < resposta.length; i++) {
+        let registro = resposta[i];
+        
+        // aplicação da fórmula  (votos * 100) / total
+        let porcentagem = (registro.votos * 100) / totalVotosGeral;
+        
+        let labelFormatado = `${registro.personagem} (${porcentagem.toFixed(1)}%)`;
+        
+        labels.push(labelFormatado); 
+        dadosVotos.push(registro.votos);   
+
+        if (registro.votos > maiorQuantidadeVotos) {
+            maiorQuantidadeVotos = registro.votos;
+            suspeitoMaisVotado = registro.personagem; 
+            houveEmpate = false; 
+        } else if (registro.votos === maiorQuantidadeVotos && maiorQuantidadeVotos > 0) {
+            houveEmpate = true; // 
+        }
+
+        let nomeSuspeito = registro.personagem.toLowerCase();
+        if (nomeSuspeito == "nate") {
+            coresDosSuspeitos.push('#457b9d'); 
+        } else if (nomeSuspeito == "bronwyn") {
+            coresDosSuspeitos.push('#a8dadc'); 
+        } else if (nomeSuspeito == "addy") {
+            coresDosSuspeitos.push('#ffb703'); 
+        } else if (nomeSuspeito == "cooper") {
+            coresDosSuspeitos.push('#c68346'); 
+        } else {
+            coresDosSuspeitos.push('#e63946'); 
+        }
+    }
+    // calcula a porcentagem do principal suspeito
+    let porcentagemMaisVotado = (maiorQuantidadeVotos * 100) / totalVotosGeral;
+    
+    // atualiza os textos das KPIs 
+    document.getElementById("kpi_total").innerHTML = totalVotosGeral;
+    
+    // operador ternario , condicaçao ? verdadeiro : falso 
+    document.getElementById("kpi_suspeito").innerHTML = houveEmpate ? "Empate" : suspeitoMaisVotado;
+    
+    document.getElementById("kpi_votos_suspeito").innerHTML = `${maiorQuantidadeVotos} votos (${porcentagemMaisVotado.toFixed(1)}%)`;
+
 
         console.log('----------------------------------------------')
         console.log('Estes dados foram recebidos pela funcao "obterDadosGrafico" e passados para "plotarGrafico":')
         console.log(resposta)
-
-        // Inserindo valores recebidos em estrutura para plotar o gráfico
-        for (i = 0; i < resposta.length; i++) {
-            var registro = resposta[i];
-            labels.push(registro.momento_grafico);
-            dados.datasets[0].data.push(registro.temperatura);
-        }
 
         console.log('----------------------------------------------')
         console.log('O gráfico será plotado com os respectivos valores:')
         console.log('Labels:')
         console.log(labels)
         console.log('Dados:')
-        console.log(dados.datasets)
+        console.log(dadosVotos.datasets)
         console.log('----------------------------------------------')
 
         // Criando estrutura para plotar gráfico - config
         const config = {
-            type: 'line',
-            data: dados,
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Votos',
+                    data: dadosVotos,
+                    backgroundColor: coresDosSuspeitos
+                }]
+            }
         };
 
         // Adicionando gráfico criado em div na tela
-        let myChart = new Chart(
-            document.getElementById(`myChartCanvas${idAquario}`),
+        let myChart = new Chart((document.getElementById('meuGraficoCanvas')),
             config
         );
 
-        setTimeout(() => atualizarGrafico(idAquario, dados, myChart), 2000);
+        setTimeout(() => atualizarGrafico(dadosVotos, myChart), 2000);
     }
 
     // Esta função *atualizarGrafico* atualiza o gráfico que foi renderizado na página,

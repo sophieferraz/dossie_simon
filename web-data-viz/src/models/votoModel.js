@@ -7,5 +7,11 @@ function votar(personagem, idUsuario) {
     console.log("Executando a instrução SQL: \n" + instrucao);
     return database.executar(instrucao);
 }
-
-module.exports = { votar};
+function buscarUltimosVotos(resposta) {
+    var instrucaoSql = `
+        SELECT personagem, COUNT(idVoto) as votos FROM voto GROUP BY personagem;
+    `;
+    console.log("Executando SQL: \n" + instrucaoSql);
+    return database.executar(instrucaoSql);
+}
+module.exports = { votar, buscarUltimosVotos };

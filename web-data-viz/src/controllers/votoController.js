@@ -16,5 +16,14 @@ function votar(req, res) {
             });
     }
 }
-
-module.exports = {votar};
+function buscarUltimosVotos(req, res) {
+    votoModel.buscarUltimosVotos()
+    .then(function (resultado) { 
+        if (resultado.length > 0) {
+            res.status(200).json(resultado); 
+        } else {
+            res.status(204).send("Nenhum voto encontrado!");
+        }
+    })
+}
+module.exports = {votar, buscarUltimosVotos};

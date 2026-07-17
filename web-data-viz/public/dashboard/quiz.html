@@ -410,6 +410,31 @@
 
         textoParaMensagemFinal += "<br> Você acertou " + Math.round((porcentagemFinalDeAcertos)*100) + "% das questões."
 
+        fetch(`/quiz/pontuacao`, {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+            pontuacaoServer: pontuacaoFinalJogo,      
+            idUsuarioServer: idUsuario 
+            })
+        }).then(function (resposta) {
+            console.log ("resposta: ", resposta);
+
+        if (resposta.ok) {
+            alert("Voto registrado no histórico com sucesso!");
+        // document.getElementById('verdade').style.display = "flex";
+        } else {
+            resposta.status().then(texto => {
+                console.error("Erro 404", texto);
+                alert("Erro ao registrar o voto.");
+            });
+        }
+    }).catch(function (resposta) {
+        console.error("Erro na requisição:", resposta);
+        finalizarAguardar();
+    });
 
         document.getElementById('msgFinal').innerHTML = textoParaMensagemFinal
         document.getElementById('msgFinal').classList.add(classComCoresParaMensagemFinal) 
