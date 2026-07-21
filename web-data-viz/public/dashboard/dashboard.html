@@ -25,7 +25,7 @@
 
 <!-- <body onload=" atualizarFeed()"> -->
 
-<body onload="obterDadosGrafico()">
+<body onload="obterDadosGraficoVoto(), obterDadosGraficoQuiz(), obterKpi()"">
 
     <div class="janela">
         <div class="header-left">
@@ -71,31 +71,38 @@
         <h2>Estatísticas do Dossiê: Quem é o assassino?</h2>
         <div class="secao-kpis">
     <div class="card-kpi">
-        <h3>Total de Votos</h3>
+        <h3>Quantidade total de votos registrados</h3>
         <p id="kpi_total">0</p>
         <span>votos computados</span>
     </div>
-
-    <div class="card-kpi destaque">
-        <h3>Principal Suspeito</h3>
+    <div class="card-kpi">
+        <h3>Percentual do principal suspeito</h3>
         <p id="kpi_suspeito">Nenhum</p>
         <span id="kpi_votos_suspeito">0 votos</span>
+    </div> 
+    <div class="card-kpi">
+        <h3>Quantidade de tentativas acima de 70%</h3>
+        <p id="kpi70">Nenhum</p>
+                <span>usuários dedicados</span>
     </div>
 </div>
+
         <div class="caixa-grafico">
             <p>Suspeitos acumulados em tempo real pelos investigadores de Bayview High</p>
-
-                <canvas class="grafico" id="meuGraficoCanvas"></canvas>
+                <canvas class="grafico" id="myChartCanvas"></canvas>
+            </div> 
+            <div class="caixa-grafico">
+            <p>Evolução de suas tentativas do quiz:</p>
+                <canvas class="grafico" id="graficoQuiz"></canvas>
             </div>
             </div>
 </body>
 </html>
-
 <script>
     b_usuario.innerHTML = sessionStorage.NOME_USUARIO;
 
     let proximaAtualizacao;
-
+    let idUsuarioServer = sessionStorage.ID_USUARIO;
     
     // O gráfico é construído com três funções:
     // 1. obterDadosGrafico -> Traz dados do Banco de Dados para montar o gráfico da primeira vez
@@ -108,7 +115,7 @@
 
     //     Se quiser alterar a busca, ajuste as regras de negócio em src/controllers
     //     Para ajustar o "select", ajuste o comando sql em src/models
-    function obterDadosGrafico() {
+    function obterDadosGraficoVoto() {
 
         if (proximaAtualizacao != undefined) {
             clearTimeout(proximaAtualizacao);
@@ -120,7 +127,7 @@
                     console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
                     resposta.reverse();
 
-                    plotarGrafico(resposta);
+                    plotarGraficoVoto(resposta);
 
                 });
             } else {
@@ -130,12 +137,40 @@
             .catch(function (error) {
                 console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
             });
+
     }
+
+  function obterDadosGraficoQuiz() {
+
+    let idUsuario = sessionStorage.ID_USUARIO;
+
+    if (proximaAtualizacao != undefined) {
+        clearTimeout(proximaAtualizacao);
+    }
+
+    fetch(`/quiz/listar/${idUsuario}`, { cache: "no-store" })
+        .then(function (response) {
+            if (response.ok) {
+                response.json().then(function (resposta) {
+                    console.log("Dados recebidos:");
+                    console.log(resposta);
+
+                    plotarGraficoQuiz(resposta);
+
+                });
+            } else {
+                console.error("Erro ao buscar dados:", response.status);
+            }
+        })
+        .catch(function (erro) {
+            console.error("Erro na requisição:", erro);
+        });
+}
 
     // Esta função *plotarGrafico* usa os dados capturados na função anterior para criar o gráfico
     // Configura o gráfico (cores, tipo, etc), materializa-o na página e, 
     // A função *plotarGrafico* também invoca a função *atualizarGrafico*
-    function plotarGrafico(resposta) {
+    function plotarGraficoVoto(resposta) {
 
         console.log('iniciando plotagem do gráfico...');
 
@@ -195,7 +230,7 @@
     // operador ternario , condicaçao ? verdadeiro : falso 
     document.getElementById("kpi_suspeito").innerHTML = houveEmpate ? "Empate" : suspeitoMaisVotado;
     
-    document.getElementById("kpi_votos_suspeito").innerHTML = `${maiorQuantidadeVotos} votos (${porcentagemMaisVotado.toFixed(1)}%)`;
+    document.getElementById("kpi_votos_suspeito").innerHTML = `${porcentagemMaisVotado.toFixed(1)}% dos votos (${maiorQuantidadeVotos} votos) `;
 
 
         console.log('----------------------------------------------')
@@ -222,15 +257,54 @@
                 }]
             }
         };
-
         // Adicionando gráfico criado em div na tela
-        let myChart = new Chart((document.getElementById('meuGraficoCanvas')),
+        let myChart = new Chart((document.getElementById('myChartCanvas')),
             config
         );
-
-        setTimeout(() => atualizarGrafico(dadosVotos, myChart), 2000);
     }
+function plotarGraficoQuiz(resposta) {
 
+    let labels = [];
+    let dados = {
+        labels: labels,
+        datasets: [{
+            label: "Pontuação",
+            data: [],
+            borderColor: "#200102",
+            fill: false,
+            tension: 0.3
+        }]
+    };
+
+    for (let i = 0; i < resposta.length; i++) {
+        let registro = resposta[i];
+        labels.push(`Tentativa ${i + 1}`);
+        dados.datasets[0].data.push(registro.pontuacao);
+
+    }
+    const config = {
+        type: "line",
+        data: dados
+    };
+    new Chart(document.getElementById("graficoQuiz"),config
+    );
+}
+function obterKpi(){
+
+    fetch(`/quiz/kpi`)
+    .then(function(response){
+        if(response.ok){
+            response.json().then(function(resposta){
+                document.getElementById("kpi70").innerHTML =
+                    resposta[0].quantidade;
+
+            });
+
+        }
+
+    });
+
+}
     // Esta função *atualizarGrafico* atualiza o gráfico que foi renderizado na página,
     // buscando a última medida inserida em tabela contendo as capturas, 
 

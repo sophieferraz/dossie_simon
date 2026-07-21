@@ -429,18 +429,23 @@ canvas {
 }
 .container-grafico {
     background-color: rgba(23, 26, 38, 0.95);
-    border: 2px solid #d80e16;
+    border: 2px solid #200102;
     border-radius: 20px;
-    padding: 40px;
-    color: white;
-    font-family: 'FonteTotal', sans-serif;
-    margin-right: 20px;              
-    max-width: 800px;
-    margin: 100px 100px 100px 250px; 
+    padding: 30px;
+    color: whitesmoke;
+    font-family: 'Montserrat', Verdana, sans-serif;
+    width: 75%;
+    max-width: 1200px;
+    margin: 50px 100px 50px 100px; 
+    margin-left: 330px;
  }
-#meuGraficoCanvas{
-    max-width: 650px
+.caixa-grafico{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;       
+    justify-content: center; 
 }
+
 .secao-kpis {
     display: flex;
     justify-content: center;
@@ -452,25 +457,22 @@ canvas {
 
 .card-kpi {
     background-color: rgba(23, 26, 38, 0.95);
-    border: 1px solid #ca3232;
+    border: 1px solid #200102;
     border-radius: 12px;
-    padding: 20px;
-    width: 250px;
+    padding: 15px;
+    width: 230px;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     align-items: center;
     justify-content: center;
-}
-
-.card-kpi.destaque {
-    border: 2px solid #e63946;
+    margin-right: 10px;
 }
 
 .card-kpi h3 {
     font-size: 16px;
     color: #aaa;
     margin: 0 0 10px 0;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -479,12 +481,12 @@ canvas {
 .card-kpi p {
     font-size: 32px;
     font-weight: bold;
-    color: #fff;
+    color: whitesmoke;
     margin: 0 0 5px 0;
 }
 
 .card-kpi.destaque p {
-    color: #e63946; 
+    color: #200102; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -522,7 +524,6 @@ canvas {
     align-self: flex-end; 
 }
 .post-it p {
-
     font-size: 14px;
     text-align: center;
     margin: 0;
@@ -679,18 +680,16 @@ button {
     flex-direction: column; 
     justify-content: center;
     align-items: center;      
-    margin-right: 25px;              
     margin: 50px auto;
-    margin-left: 20%;
+    /* margin-left: 15%; */
     width: 75%;
     box-sizing: border-box;
 }
 .opcoes-voto {
-    display: flex;            
-    flex-direction: row;   
+    display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;      
+    justify-content: center; 
+    align-items: center;     
     margin-right: 15px;                
     width: 100%;
 }
@@ -703,8 +702,9 @@ button {
     padding: 15px;
     border-radius: 8px;
     border-left: 4px solid #200102; 
-    width: 190px;             
-    box-sizing: border-box;   
+    width: 180px;             
+    box-sizing: border-box;  
+    margin: 10px 15px; 
 }
 
 .img {
@@ -731,4 +731,37 @@ button {
 
 #btnVotar:hover {
     background-color: #3f0101;
+}
+.vdd {
+    background-image: url('../assets/imgs/fundo-verdade.png');
+    color: #171a26;
+    font-family: 'Montserrat', Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;   
+    align-items: center; 
+    margin: 50px;
+    border-radius: 5px;
+    padding: 20px;
+}
+.img-suspeito {
+    width: 160px;
+    border-radius: 3px;
+    margin: 15px 15px 10px 100px;
+    font-size: xx-large;
+}
+.frase-destaque {
+    color: #d80e16;
+}
+.fechar-vdd {
+    background-color: #d80e16;
+    color: white;
+    padding: 15px;
+    width: 100%;
+    max-width: 260px;        
+    border: none;
+    border-radius: 25px;    
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.2s;  
 }
